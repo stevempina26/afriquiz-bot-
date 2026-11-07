@@ -7,7 +7,7 @@ from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandle
 # ==========================================
 # CONFIGURATION OFFICIELLE (TES CLÉS & URL)
 # ==========================================
-SUPABASE_URL = "https://ymluzygervjtiwiurtdh.supabase.co[span_2](start_span)"[span_2](end_span)
+SUPABASE_URL = "https://ymluzygervjtiwiurtdh.supabase.co"
 SUPABASE_KEY = "sb_secret_fK2nHvYgOCq6EIVIl-LoRmQ_B3mct0qS"
 TELEGRAM_BOT_TOKEN = "8691263472:AAE2zpgrLbT8p-OC4g66RzHMS9q4tb0Zdnuo"
 BINANCE_API_KEY = os.environ.get("BINANCE_API_KEY", "TON_BINANCE_API_KEY_ICI")
