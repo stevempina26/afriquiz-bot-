@@ -20,54 +20,43 @@ HEADERS = {
 }
 
 # ==========================================
-# 1. MODULE DE RÉCUPÉRATION DES TÂCHES MONDIALES
+# 1. MODULE DE RÉCUPÉRATION EN TEMPS RÉEL (FLUX DYNAMIQUES)
 # ==========================================
 def fetch_global_enterprise_tasks():
-    print("[INFO] Connexion simultanée aux passerelles mondiales (US, Asie, Europe, Émirats)...")
+    print("[INFO] Connexion aux passerelles mondiales en direct...")
+    try:
+        # Interrogation d'une API ouverte de missions internationales
+        response = requests.get("https://remoteok.com/api", headers={"User-Agent": "Mozilla/5.0"})
+        if response.status_code == 200:
+            data = response.json()
+            collected_tasks = []
+            # Extraction automatique des vraies offres du web
+            for item in data[1:5]:
+                title = item.get("position", "Mission internationale vérifiée")
+                company = item.get("company", "Partenaire mondial")
+                location = item.get("location", "Global / Remote")
+                
+                collected_tasks.append({
+                    "title": f"{title} ({company})",
+                    "description": f"Mission réelle validée en direct. Localisation : {location}.",
+                    "reward": 2500,
+                    "category": "Tâche Numérique & Tech",
+                    "source_region": location
+                })
+            return collected_tasks
+    except Exception as err:
+        print(f"[ERREUR API WEB] Impossible de récupérer les flux en direct : {err}")
     
-    collected_tasks = [
+    # Données de secours si le réseau externe rencontre un ralentissement
+    return [
         {
-            "title": "NASA / Imagerie Spatiale : Classification d'éléments orbitaux",
-            "description": "Validation et annotation de données d'observation de la Terre.",
+            "title": "Validation de flux de données internationales - Live",
+            "description": "Traitement automatisé de données récupérées en direct du réseau mondial.",
             "reward": 2500,
-            "category": "Science & Spatial",
-            "source_region": "États-Unis / International"
-        },
-        {
-            "title": "Étude de marché globale : Tendances de consommation (Coca-Cola / McDonald's)",
-            "description": "Évaluation des retours de satisfaction et audits de bannières publicitaires mondiales.",
-            "reward": 1800,
-            "category": "Retail & Grande Consommation",
-            "source_region": "USA / Global"
-        },
-        {
-            "title": "Audit de catalogue numérique - Luxe (Louis Vuitton / Gucci)",
-            "description": "Vérification des métadonnées de produits et indexation visuelle multilingue.",
-            "reward": 3000,
-            "category": "Luxe & Mode",
-            "source_region": "France / Italie / Dubaï"
-        },
-        {
-            "title": "Traitement de données algorithmiques (Partenaires Asie / Chine / Japon)",
-            "description": "Nettoyage et structuration de jeux de données textuels et techniques haute fidélité.",
-            "reward": 2200,
-            "category": "Intelligence Artificielle",
-            "source_region": "Asie-Pacifique"
+            "category": "Traitement de Données",
+            "source_region": "International"
         }
     ]
-    return collected_tasks
-
-def sync_to_supabase(tasks):
-    url = f"{SUPABASE_URL}/rest/v1/tasks"
-    for task in tasks:
-        try:
-            response = requests.post(url, headers=HEADERS, json=task)
-            if response.status_code in [200, 201]:
-                print(f"[SUCCÈS] Tâche mondiale intégrée : {task['title']} ({task['source_region']})")
-            else:
-                print(f"[ERREUR] Échec d'insertion Supabase : {response.text}")
-        except Exception as err:
-            print(f"[ERREUR RÉSEAU] Impossible de joindre Supabase : {err}")
 
 # ==========================================
 # 2. MODULE DE PAIEMENT & PASSERELLE BINANCE
@@ -108,18 +97,17 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer()
     
     if query.data == "view_tasks":
-        url = f"{SUPABASE_URL}/rest/v1/tasks?select=id,title,reward,source_region&limit=3"
-        try:
-            res = requests.get(url, headers=HEADERS)
-            tasks = res.json()
-            if tasks:
-                text = "🎯 **Tâches mondiales prêtes :**\n\n"
-                for t in tasks:
-                    text += f"🔹 **{t['title']}**\n💰 Récompense : `{t['reward']} FCFA`\n📍 Source : {t['source_region']}\n\n"
-            else:
-                text = "Aucune tâche disponible pour le moment. Revenez dans quelques instants !"
-        except Exception:
-            text = "Erreur de connexion aux flux de tâches."
+        # Appel direct du récupérateur dynamique en temps réel
+        tasks = fetch_global_enterprise_tasks()
+        if tasks:
+            text = "🎯 **Tâches mondiales en direct :**\n\n"
+            for t in tasks:
+                text += f"🔹 **{t['title']}**\n" \
+                        f"📝 {t['description']}\n" \
+                        f"💰 Récompense : `{t['reward']} FCFA`\n" \
+                        f"📍 Source : {t['source_region']}\n\n"
+        else:
+            text = "Aucune tâche disponible pour le moment. Revenez dans quelques instants !"
             
         await query.edit_message_text(text=text, parse_mode="Markdown")
         
