@@ -9,7 +9,7 @@ from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandle
 # ==========================================
 SUPABASE_URL = "https://ymluzygervjtiwiurtdh.supabase.co"
 SUPABASE_KEY = "sb_secret_fK2nHvYgOCq6EIVIl-LoRmQ_B3mct0qS"
-TELEGRAM_BOT_TOKEN = "8691263472:AAE2zpgrLbT8p-OC4g66RzHMS9q4tb0Zdnuo"
+TELEGRAM_BOT_TOKEN = "8691263472:AAHhnAT_bhuaJRVijzKK3DB6AZc6xZZ4UO4"
 BINANCE_API_KEY = os.environ.get("BINANCE_API_KEY", "TON_BINANCE_API_KEY_ICI")
 
 HEADERS = {
